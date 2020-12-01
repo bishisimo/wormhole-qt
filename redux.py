@@ -17,6 +17,7 @@ class Redux(QObject):
         self.messages = []
         self.single_message=""
         self.sub_program = None
+        self.display_obj=None
         self.init_config()
         if self._is_command_valid:
             logger.info("start")
@@ -149,11 +150,16 @@ class Redux(QObject):
             self(command)
         else:
             sp=command.split("=")
+            if len(sp)==1:
+                if sp[0]=="clear":
+                    self.single_message=""
+                    self.display_obj.setProperty("text",self.single_message)
             if len(sp)==2:
                 if sp[0]=="wormhole":
                     self.wormhole=sp[1]
                     self.config["wormhole"]=self.wormhole
-            self.write_config()
+                    self.write_config()
+
 
     @Slot(str, str, result=None)
     def send(self, target: str, message: str):
@@ -177,6 +183,11 @@ class Redux(QObject):
         self.check_start("send")
         self(cmd)
 
+    # @Slot(QObject)
+    # def clear_message(self,obj):
+    #     self.single_message=""
+    #     obj.setProperty("text",self.single_message)
+
     @Slot(QObject)
     def get_message(self,obj):
         # single_message=""
@@ -184,6 +195,8 @@ class Redux(QObject):
         #     single_message+="\n"+message
         # obj.setProperty("text",single_message)
         obj.setProperty("text",self.single_message)
+        if self.display_obj is None:
+            self.display_obj=obj
 
     def listen_log(self):
         self.check_start("listen log")
@@ -208,25 +221,6 @@ class Redux(QObject):
         logger.info("exit")
         self("stop")
         self.sub_program.kill()
-        # sys.exit(1)
-
-
-# class LogListener(QThread):
-#     signal=QtCore.Signal()
-#     name=""
-#
-#     @Property(str)
-#     def name(self):
-#         return self._name
-#
-#     @name.setter
-#     def name(self, name):
-#         self._name = name
-#
-#     @Slot()
-#     def Emit(self):
-#         self.update()
-#         self.signal.emit()
 
 
 class MyListModel(QAbstractListModel):

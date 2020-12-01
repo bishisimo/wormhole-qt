@@ -396,7 +396,35 @@ Window {
         clip:true
         Keys.onUpPressed: vbar.decrease()
         Keys.onDownPressed: vbar.increase()
-
+//        MouseArea{
+//              anchors.fill: parent
+//              onWheel: {
+//                  if (wheel.angleDelta.y > 0) {
+//                      vbar.decrease();
+//                  }
+//                  else {
+//                      vbar.increase();
+//                  }
+//              }
+//              onClicked: {
+//                  textEdit_log.forceActiveFocus();
+//              }
+//              onDoubleClicked: {
+//                redux.clear_message(textEdit_log)
+//              }
+//              TextEdit {
+//                  id: textEdit_log
+//                  x: 0
+//                  height: contentHeight
+//                  width: rectangle_log.width - vbar.width
+//                  y: -vbar.position * textEdit_log.height
+//                  font.pixelSize: 12
+//                  wrapMode: Text.WrapAnywhere
+//                  selectionColor: "#7f54d1"
+//                  selectByKeyboard: true
+//                  selectByMouse: true
+//                  readOnly: true
+//        }
         TextEdit {
             id: textEdit_log
             x: 0
@@ -410,18 +438,22 @@ Window {
             selectByMouse: true
             readOnly: true
             MouseArea{
-                  anchors.fill: parent
-                  onWheel: {
-                      if (wheel.angleDelta.y > 0) {
-                          vbar.decrease();
-                      }
-                      else {
-                          vbar.increase();
-                      }
+                propagateComposedEvents: true
+                anchors.fill: parent
+                onWheel: {
+                  if (wheel.angleDelta.y > 0) {
+                      vbar.decrease();
                   }
-                  onClicked: {
-                      textEdit_log.forceActiveFocus();
+                  else {
+                      vbar.increase();
                   }
+                }
+                onClicked: {
+                  textEdit_log.forceActiveFocus()
+                    mouse.accepted=false
+                }
+                onPressed: mouse.accepted=false
+                onReleased: mouse.accepted=false
             }
         }
     }
