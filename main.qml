@@ -283,7 +283,9 @@ Window {
                 target: dropArea_drop
                 function onDropped(drop){
                     if (drop.urls.length>0){
+                        text_drop.text="Send..."
                         redux.send(listView.currentIndex ,drop.urls[0].substring(7))
+                        text_drop.text="Ok!"
                     }
                 }
             }
@@ -298,16 +300,18 @@ Window {
             preventStealing: true
             hoverEnabled: true
             property bool  is_hover:false
-            Connections {
-                target: mouseArea_drop
-                function onHoveredChanged() {
+            property bool is_ok: false
+            onHoveredChanged: {
                     mouseArea_drop.is_hover=mouseArea_drop.is_hover?false:true
                     text_drop.font.pixelSize=mouseArea_drop.is_hover?25:18
                     text_drop.font.underline=mouseArea_drop.is_hover?true:false
                     text_drop.color=mouseArea_drop.is_hover?"#A0EEE1":"#000000"
+                    if(!mouseArea_drop.is_hover&&text_drop.text=="Ok!"){
+                        if (is_ok){text_drop.text="Drop to Here"}
+                        is_ok=!is_ok
+                    }
                 }
             }
-        }
 
         Text {
             id: text_drop
@@ -492,8 +496,15 @@ Window {
             cursorVisible: true
             selectionColor: "#7f54d1"
             maximumLength: 135
+            property var colors: ["#ffffff","#FFB6C1","#FFE4C4","#EEE8AA","#F5FFFA","#AFEEEE"]
+            property int index: 0
             onAccepted: {
                 redux.send(listView.currentIndex ,textInput_message.text)
+                index++
+                if(index>=colors.length){
+                    index=0
+                }
+                rectangle_message.color=colors[index]
             }
         }
     }
