@@ -284,7 +284,9 @@ Window {
                 function onDropped(drop){
                     if (drop.urls.length>0){
                         text_drop.text="Send..."
-                        redux.send(listView.currentIndex ,drop.urls[0].substring(7))
+                        for(i=0;i<drop.urls.length;i++){
+                            redux.send(listView.currentIndex ,drop.urls[i].substring(7))
+                        }
                         text_drop.text="Ok!"
                     }
                 }

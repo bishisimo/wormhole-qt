@@ -24,7 +24,6 @@ class Redux(QObject):
             self("stop")
             self.check_start("init")
             self.listen_log()
-            os.system(f"chmod u+x {self.wormhole}")
             self("set log_lever=error")
 
 
